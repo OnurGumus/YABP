@@ -1,4 +1,6 @@
-﻿type Coordinates = { X : int ; Y: int; Z:int}
+﻿[<Struct>]
+type Coordinates = { X : int ; Y: int; Z:int}
+[<Struct>]
 type Dim =  { Width : int ; Height:int ; Length :int}
 type Container = { Dim : Dim; Coord: Coordinates}
 type Item = { Dim : Dim}
@@ -28,6 +30,7 @@ let putItem : PutItem =
         if (remainingHeight < 0 ) || remainingLength < 0 || remainingWidth < 0 then
             None
         else
+        let config1=
             let topBlock = {
                 Dim = { Width = container.Dim.Width; Height = remainingHeight; Length = item.Dim.Length}
                 Coord = {X = container.Coord.X ; Y= container.Coord.Y + item.Dim.Height; Z =container.Coord.Z}}
@@ -39,8 +42,50 @@ let putItem : PutItem =
             let remainingBlock = {
                 Dim = { Width = container.Dim.Width; Height = container.Dim.Height; Length = remainingLength}
                 Coord = { X= container.Coord.X ; Y = container.Coord.Y; Z= container.Coord.Z + item.Dim.Length}}
-            let itemPut = { Item = item; Coord = { X = container.Coord.X; Y = container.Coord.Y; Z = container.Coord.Z }}
-            Some ([[topBlock;sideBlock;remainingBlock]], itemPut)
+            [topBlock;sideBlock;remainingBlock]
+        let config2=
+            let topBlock = {
+                Dim = { Width = item.Dim.Width; Height = remainingHeight; Length = item.Dim.Length}
+                Coord = {X = container.Coord.X ; Y= container.Coord.Y + item.Dim.Height; Z =container.Coord.Z}}
+            
+            let sideBlock = {
+                Dim = { Width = remainingWidth; Height = container.Dim.Height; Length = item.Dim.Length}
+                Coord = { X = container.Coord.X + item.Dim.Width ; Y=  container.Coord.Y; Z = container.Coord.Z}}
+
+            let remainingBlock = {
+                Dim = { Width = container.Dim.Width; Height = container.Dim.Height; Length = remainingLength}
+                Coord = { X= container.Coord.X ; Y = container.Coord.Y; Z= container.Coord.Z + item.Dim.Length}}
+            [topBlock;sideBlock;remainingBlock]
+        let config3 =
+            let topBlock = {
+                Dim = { Width = container.Dim.Width; Height = remainingHeight; Length = container.Dim.Length}
+                Coord = {X = container.Coord.X ; Y= container.Coord.Y + item.Dim.Height; Z =container.Coord.Z}}
+            
+            let sideBlock = {
+                Dim = { Width = remainingWidth; Height = item.Dim.Height; Length = container.Dim.Length}
+                Coord = { X = container.Coord.X + item.Dim.Width ; Y=  container.Coord.Y; Z = container.Coord.Z}}
+
+            let remainingBlock = {
+                Dim = { Width = item.Dim.Width; Height = item.Dim.Height; Length = remainingLength}
+                Coord = { X= container.Coord.X ; Y = container.Coord.Y; Z= container.Coord.Z + item.Dim.Length}}
+            [topBlock;sideBlock;remainingBlock]
+        let config4 =
+            let topBlock = {
+                Dim = { Width = item.Dim.Width; Height = remainingHeight; Length = container.Dim.Length}
+                Coord = {X = container.Coord.X ; Y= container.Coord.Y + item.Dim.Height; Z =container.Coord.Z}}
+            
+            let sideBlock = {
+                Dim = { Width = remainingWidth; Height = container.Dim.Height; Length = container.Dim.Length}
+                Coord = { X = container.Coord.X + item.Dim.Width ; Y=  container.Coord.Y; Z = container.Coord.Z}}
+
+            let remainingBlock = {
+                Dim = { Width = item.Dim.Width; Height = item.Dim.Height; Length = remainingLength}
+                Coord = { X= container.Coord.X ; Y = container.Coord.Y; Z= container.Coord.Z + item.Dim.Length}}
+
+            [topBlock;sideBlock;remainingBlock]
+        let itemPut = { Item = item; Coord = { X = container.Coord.X; Y = container.Coord.Y; Z = container.Coord.Z }}
+         
+        Some([config1;config2;config3; config4], itemPut)
 
 
 let calculateCost  =
